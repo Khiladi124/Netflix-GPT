@@ -1,12 +1,13 @@
 import { useState,useRef } from "react";
 import Header from "./Header";
 import {checkValidData} from "../utils/validate";
-
-
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../utils/firebase";
 const Login=()=>{
 
   const [isSignInForm, setIsSignInForm]=useState(true);
-  const [errorMessgae,setErrorMessage] =useState(null);
+  const [errorMessage,setErrorMessage] =useState(null);
 
   const email=useRef(null);
   const password=useRef(null);
@@ -14,10 +15,49 @@ const Login=()=>{
      setIsSignInForm(!isSignInForm);
   };   
   const handleButtonClick=()=>{
+
     console.log(email.current.value);
     console.log(password.current.value);
+
     const message=checkValidData(email.current.value,password.current.value);
+
     setErrorMessage(message);
+
+    if(isSignInForm)
+        {
+            if(message===null){
+               
+signInWithEmailAndPassword(auth, email.current.value, password.current.value)
+  .then((userCredential) => {
+    const user = userCredential.user;
+  })
+  .catch((error) => {
+    const authErrorCode = error.code;
+    const authErrorMessage = error.message;
+    setErrorMessage(authErrorCode +": "+ authErrorMessage);
+  });
+
+            }
+
+        }else{
+           if(message===null){
+           
+createUserWithEmailAndPassword(auth, email.current.value, password.current.value)
+  .then((userCredential) => {
+    // Signed up 
+    const user = userCredential.user;
+    // ...
+  })
+  .catch((error) => {
+    const authErrorCode = error.code;
+    const authErrorMessage = error.message;
+    setErrorMessage(authErrorCode +": "+ authErrorMessage);
+    // ..
+  });
+
+           }
+
+        }
   } 
  return (<div>
 
@@ -30,17 +70,21 @@ const Login=()=>{
         {
             !isSignInForm&&<input type="text" placeholder="First Name" className="p-2 my-2 w-full bg-white rounded-lg"/>
         }
-         {
+        {
             !isSignInForm&&<input type="text" placeholder="Last Name" className="p-2 my-2 w-full bg-white rounded-lg"/>
         }
         
-        {setErrorMessage.errorInEmail && <p className=" text-red-800  ">{errorMessgae.errorInEmail}</p>}
+        {/* { errorMessage && <p className=" text-red-800  ">{errorMessage}</p>} */}
         <input ref={email} type="email" placeholder="Email Address" className="p-2 my-2 w-full rounded-lg "/>
-        {setErrorMessage.errorInPassword && <p className=" text-red-800  ">{errorMessgae.errorInPassword}</p>}
+        {/* {errorMessage && <p className=" text-red-800  ">{errorMessage}</p>} */}
         <input ref={password} type="password" placeholder="Password" className="p-2 my-2 w-full rounded-lg"/>
         {
             !isSignInForm&&<input  type="password" placeholder="Confirm Password" className="p-2 my-2 w-full rounded-lg"/>
         }
+        {
+            errorMessage && <p className="  text-red-400 font-bold ">{errorMessage}</p>
+        }
+       
         
         <button className="p-2  my-4 font-bold text-white bg-red-600 w-full rounded-lg" onClick={handleButtonClick}>{isSignInForm?"Sign In":"Sign Up"}</button>
         <p className="text-white font-thin ">{isSignInForm?"New on Netflix?":"Already Registered?"} <a href="#" className="text-white" onClick={toggleSignInForm}> {isSignInForm?"Sign Up.":"Sign In."}</a></p>
