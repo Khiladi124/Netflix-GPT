@@ -2,15 +2,20 @@ import { useState,useRef } from "react";
 import Header from "./Header";
 import {checkValidData} from "../utils/validate";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword ,updateProfile} from "firebase/auth";
 import { auth } from "../utils/firebase";
+import { useNavigate } from "react-router-dom";
+import { addUser } from "../utils/userSlice";
+import { useDispatch } from "react-redux";
 const Login=()=>{
-
+  const dispatch=useDispatch();
+  const navigate=useNavigate();
   const [isSignInForm, setIsSignInForm]=useState(true);
   const [errorMessage,setErrorMessage] =useState(null);
 
   const email=useRef(null);
   const password=useRef(null);
+  const displayName=useRef(null);
   const toggleSignInForm=()=>{
      setIsSignInForm(!isSignInForm);
   };   
@@ -30,6 +35,7 @@ const Login=()=>{
 signInWithEmailAndPassword(auth, email.current.value, password.current.value)
   .then((userCredential) => {
     const user = userCredential.user;
+    navigate('/Browse');
   })
   .catch((error) => {
     const authErrorCode = error.code;
@@ -46,13 +52,24 @@ createUserWithEmailAndPassword(auth, email.current.value, password.current.value
   .then((userCredential) => {
     // Signed up 
     const user = userCredential.user;
-    // ...
+    updateProfile(auth.currentUser, {
+      name: displayName.current.value
+    }).then(() => {
+      const { uid, email, name}=auth.currentUser;
+      dispatch(
+        addUser({uid:uid, email:email, name:name})
+      );
+      navigate('/Browse');
+    }).catch((error) => {
+    
+    });
+   
   })
   .catch((error) => {
     const authErrorCode = error.code;
     const authErrorMessage = error.message;
     setErrorMessage(authErrorCode +": "+ authErrorMessage);
-    // ..
+    
   });
 
            }
@@ -68,7 +85,7 @@ createUserWithEmailAndPassword(auth, email.current.value, password.current.value
     <form className="absolute p-12 bg-black bg-opacity-55 w-1/3 h-auto my-20 mx-auto right-0 left-0">
         <h1 className="text-white font-bold mb-4 ml-0 mr-0 "> {isSignInForm?"Sign In":"Sign Up"}</h1>
         {
-            !isSignInForm&&<input type="text" placeholder="First Name" className="p-2 my-2 w-full bg-white rounded-lg"/>
+            !isSignInForm&&<input ref={displayName} type="text" placeholder="First Name" className="p-2 my-2 w-full bg-white rounded-lg"/>
         }
         {
             !isSignInForm&&<input type="text" placeholder="Last Name" className="p-2 my-2 w-full bg-white rounded-lg"/>
