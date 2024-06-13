@@ -7,7 +7,7 @@ function App() {
  
 
   return (
-  <div>
+  <div className="bg-gray-900">
       <Provider store={appStore}><Body/></Provider>
   </div>
   );
