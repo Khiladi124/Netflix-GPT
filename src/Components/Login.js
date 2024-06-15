@@ -35,7 +35,7 @@ const Login = () => {
           .then((userCredential) => {
             const user = userCredential.user;
             console.log(user);
-       //     navigate('/Browse');
+      
           })
           .catch((error) => {
             const authErrorCode = error.code;
@@ -52,6 +52,7 @@ const Login = () => {
           .then((userCredential) => {
             // Signed up 
             const user = userCredential.user;
+            console.log(user);
             updateProfile(auth.currentUser, {
               name: name.current.value
             }).then(() => {
