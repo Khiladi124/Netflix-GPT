@@ -10,6 +10,7 @@
     "eslint-plugin-react-hooks": "^5.1.0-rc-fb9a90fa48-20240614",
     "firebase": "^10.12.2",
     "node-fetch": "^2.7.0",
+    "openai": "^4.51.0",
     "react": "^18.3.1",
     "react-devtools": "^5.2.0",
     "react-dom": "^18.3.1",

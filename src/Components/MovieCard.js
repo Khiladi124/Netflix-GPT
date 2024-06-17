@@ -6,7 +6,7 @@ const MovieCard = ({title,posterPath}) => {
 const image=IMG_URL+posterPath;
 
 return (
-    <div className="bg-black rounded-lg shadow-lg overflow-hidden h-full mx-1 min-w-40 relative">
+    <div className="bg-black rounded-lg shadow-lg overflow-hidden h-full mx-[0.5px] sm:mx-1 min-w-[135px] sm:min-w-[200px] relative">
       <div className="relative group">
         <img
           className="w-full h-full object-cover hover:opacity-50"

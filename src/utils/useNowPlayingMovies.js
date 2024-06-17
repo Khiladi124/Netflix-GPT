@@ -14,11 +14,16 @@ const useNowPlayingMovies=()=>{
      */
     
     const getNowPlayingMovies= async ()=>{
-        const url = 'https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1';
-        const data=await fetch(url,options);
-        const json= await data.json();
-        dispatch(addNowPlayingMovies(json.results));
-        console.log(json.results);
+        
+        try {
+            const url = 'https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1';
+            const response = await fetch(url, options);
+            const data = await response.json();
+            dispatch(addNowPlayingMovies(data.results));
+            console.log(data.results);
+        } catch (error) {
+            console.error(error);
+        }
         
 };
     useEffect(()=>{
